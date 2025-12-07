@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diabetes Prediction</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+
+        .bg-icon {
+            position: fixed;
+            font-size: 2.5rem;
+            color: #000000 !important;
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 1;
+            animation: float 15s ease-in-out infinite;
+        }
+
+        .pill-icon {
+            animation-duration: 20s;
+            animation-delay: 0s;
+        }
+
+        .syringe-icon {
+            animation-duration: 18s;
+            animation-delay: 3s;
+        }
+
+        .stethoscope-icon {
+            animation-duration: 22s;
+            animation-delay: 6s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) translateX(0px) rotate(0deg);
+                opacity: 0.1;
+            }
+            25% {
+                transform: translateY(-30px) translateX(20px) rotate(10deg);
+                opacity: 0.2;
+            }
+            50% {
+                transform: translateY(-60px) translateX(-10px) rotate(-5deg);
+                opacity: 0.15;
+            }
+            75% {
+                transform: translateY(-30px) translateX(30px) rotate(8deg);
+                opacity: 0.25;
+            }
+        }
+
+
+        .bg-icon:nth-child(1) { top: 10%; left: 10%; animation-name: float; animation-duration: 25s; }
+        .bg-icon:nth-child(2) { top: 20%; right: 15%; animation-name: float; animation-duration: 30s; animation-direction: reverse; }
+        .bg-icon:nth-child(3) { top: 60%; left: 20%; animation-name: float; animation-duration: 22s; }
+        .bg-icon:nth-child(4) { bottom: 20%; right: 25%; animation-name: float; animation-duration: 28s; animation-delay: 2s; }
+        .bg-icon:nth-child(5) { top: 40%; left: 5%; animation-name: float; animation-duration: 26s; animation-delay: 5s; }
+        .bg-icon:nth-child(6) { bottom: 40%; left: 15%; animation-name: float; animation-duration: 24s; animation-delay: 8s; }
+        .bg-icon:nth-child(7) { top: 70%; right: 10%; animation-name: float; animation-duration: 27s; animation-delay: 10s; }
+        .bg-icon:nth-child(8) { bottom: 10%; right: 5%; animation-name: float; animation-duration: 23s; animation-delay: 12s; }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24);
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px 20px 15px 50px;
+            border: 2px solid #e1e8ed;
+            border-radius: 15px;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            position: relative;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+            transform: translateY(-2px);
+        }
+
+        input[type="text"]:valid {
+            border-color: #27ae60;
+        }
+
+        .form-group:nth-child(1) label::before { content: '\f49d'; font-family: 'Font Awesome 6 Free'; font-weight: 900; margin-right: 8px; color: #3498db; }
+        .form-group:nth-child(2) label::before { content: '\f004'; font-family: 'Font Awesome 6 Free'; font-weight: 900; margin-right: 8px; color: #e74c3c; }
+        .form-group:nth-child(3) label::before { content: '\f21e'; font-family: 'Font Awesome 6 Free'; font-weight: 900; margin-right: 8px; color: #f39c12; }
+        .form-group:nth-child(4) label::before { content: '\f489'; font-family: 'Font Awesome 6 Free'; font-weight: 900; margin-right: 8px; color: #9b59b6; }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.3em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        input[type="submit"]:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        input[type="submit"]:active {
+            transform: translateY(-1px);
+        }
+
+        .prediction-result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .prediction-result.success {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+
+            h2 {
+                font-size: 1.8em;
+            }
+
+            .bg-icon {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <i class="fas fa-pills bg-icon pill-icon"></i>
+    <i class="fas fa-syringe bg-icon syringe-icon"></i>
+    <i class="fas fa-stethoscope bg-icon stethoscope-icon"></i>
+    <i class="fas fa-pills bg-icon pill-icon"></i>
+    <i class="fas fa-syringe bg-icon syringe-icon"></i>
+    <i class="fas fa-stethoscope bg-icon stethoscope-icon"></i>
+    <i class="fas fa-pills bg-icon pill-icon"></i>
+    <i class="fas fa-syringe bg-icon syringe-icon"></i>
+
+    <div class="container">
+        <h2><i class="fas fa-heartbeat" style="color: #e74c3c; margin-right: 10px;"></i>Diabetes Prediction</h2>
+        <form method="post" action="/predict">
+            <div class="form-group">
+                <label>Number of Pregnancies:</label>
+                <input type="text" name="num_preg" placeholder="e.g., 2" value="{{ form_data.num_preg if form_data else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Glucose Concentration:</label>
+                <input type="text" name="glucose_conc" placeholder="e.g., 120" value="{{ form_data.glucose_conc if form_data else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Diastolic Blood Pressure:</label>
+                <input type="text" name="diastolic_bp" placeholder="e.g., 70" value="{{ form_data.diastolic_bp if form_data else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Insulin:</label>
+                <input type="text" name="insulin" placeholder="e.g., 94" value="{{ form_data.insulin if form_data else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>BMI:</label>
+                <input type="text" name="bmi" placeholder="e.g., 30.5" value="{{ form_data.bmi if form_data else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Diabetes Pedigree Function:</label>
+                <input type="text" name="diab_pred" placeholder="e.g., 0.372" value="{{ form_data.diab_pred if form_data else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Age:</label>
+                <input type="text" name="age" placeholder="e.g., 33" value="{{ form_data.age if form_data else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Skin Thickness:</label>
+                <input type="text" name="skin" placeholder="e.g., 20" value="{{ form_data.skin if form_data else '' }}" required>
+            </div>
+
+            <input type="submit" value="Predict Diabetes Risk">
+        </form>
+
+        {% if prediction_text %}
+            <div class="prediction-result success">{{ prediction_text }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>
